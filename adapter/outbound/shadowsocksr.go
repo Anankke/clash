@@ -103,13 +103,13 @@ func NewShadowSocksR(option ShadowSocksROption) (*ShadowSocksR, error) {
 		ivSize int
 		key    []byte
 	)
-	if option.Cipher == "dummy" {
+	if option.Cipher == "none" {
 		ivSize = 0
 		key = core.Kdf(option.Password, 16)
 	} else {
 		ciph, ok := coreCiph.(*core.StreamCipher)
 		if !ok {
-			return nil, fmt.Errorf("%s is not dummy or a supported stream cipher in ssr", cipher)
+			return nil, fmt.Errorf("%s is not none or a supported stream cipher in ssr", cipher)
 		}
 		ivSize = ciph.IVSize()
 		key = ciph.Key
