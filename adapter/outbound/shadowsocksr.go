@@ -92,6 +92,12 @@ func (ssr *ShadowSocksR) ListenPacketContext(ctx context.Context, metadata *C.Me
 }
 
 func NewShadowSocksR(option ShadowSocksROption) (*ShadowSocksR, error) {
+	// SSR protocol compatibility
+	// https://github.com/Dreamacro/clash/pull/2056
+	if option.Cipher == "none" {
+		option.Cipher = "dummy"
+	}
+
 	addr := net.JoinHostPort(option.Server, strconv.Itoa(option.Port))
 	cipher := option.Cipher
 	password := option.Password
@@ -103,7 +109,8 @@ func NewShadowSocksR(option ShadowSocksROption) (*ShadowSocksR, error) {
 		ivSize int
 		key    []byte
 	)
-	if option.Cipher == "none" {
+
+	if option.Cipher == "dummy" {
 		ivSize = 0
 		key = core.Kdf(option.Password, 16)
 	} else {
